@@ -14,10 +14,11 @@ services:
           property: connectionString
     autoDeploy: true
 
-  # 2. Frontend Service (React + Vite Static Site Deployment)
+  # 2. Frontend Service (React + Vite Static Site)
   - type: static
     name: buildverse-frontend
     plan: free
+    rootDir: frontend
     buildCommand: npm install && npm run build
     publishPath: dist
     envVars:
