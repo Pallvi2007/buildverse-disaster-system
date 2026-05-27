@@ -25,5 +25,5 @@ COPY . .
 
 EXPOSE 8000
 
-# Execute the ASGI server loop using your modular app architecture
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Fix: Points directly to main:app root module
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
