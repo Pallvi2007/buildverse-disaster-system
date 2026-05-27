@@ -1,10 +1,10 @@
 services:
-  # 1. Backend Service (FastAPI + LangGraph)
+  # 1. Backend Service (FastAPI + LangGraph Container)
   - type: web
     name: buildverse-backend
     runtime: docker
     plan: free
-    dockerContext: backend
+    rootDir: backend
     healthCheckPath: /health
     envVars:
       - key: SECRET_KEY
@@ -14,8 +14,9 @@ services:
   - type: web
     name: buildverse-frontend
     runtime: static
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: frontend/dist
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
         value: https://buildverse-backend.onrender.com
