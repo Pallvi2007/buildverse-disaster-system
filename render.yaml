@@ -1,5 +1,5 @@
 services:
-  # 1. Backend Service (FastAPI + LangGraph)
+  # 1. Backend Service (FastAPI + LangGraph Container)
   - type: web
     name: buildverse-backend
     env: docker
@@ -14,20 +14,19 @@ services:
           property: connectionString
     autoDeploy: true
 
-  # 2. Frontend Service (React + Vite Static Site)
-  - type: web
+  # 2. Frontend Service (React + Vite Static Site Deployment)
+  - type: static
     name: buildverse-frontend
-    env: static
     plan: free
     buildCommand: npm install && npm run build
-    staticPublishPath: dist
+    publishPath: dist
     envVars:
       - key: VITE_API_URL
         value: https://buildverse-backend.onrender.com
       - key: VITE_API_SECRET
         sync: false
 
-# 3. Persistent PostgreSQL Database
+# 3. Persistent Managed PostgreSQL Instance
 databases:
   - name: buildverse-db
     plan: free
