@@ -15,12 +15,13 @@ services:
     autoDeploy: true
 
   # 2. Frontend Service (React + Vite Static Site)
-  - type: static
+  - type: web
     name: buildverse-frontend
+    runtime: static
     plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
-    publishPath: dist
+    staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
         value: https://buildverse-backend.onrender.com
