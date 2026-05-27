@@ -4,7 +4,7 @@ services:
     name: buildverse-backend
     runtime: docker
     plan: free
-    rootDir: backend
+    dockerContext: backend
     healthCheckPath: /health
     envVars:
       - key: SECRET_KEY
@@ -14,9 +14,8 @@ services:
   - type: web
     name: buildverse-frontend
     runtime: static
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
     envVars:
       - key: VITE_API_URL
         value: https://buildverse-backend.onrender.com
