@@ -1,9 +1,10 @@
 services:
-  # 1. Backend Service (FastAPI + LangGraph Container running SQLite)
+  # 1. Backend Service (FastAPI + LangGraph)
   - type: web
     name: buildverse-backend
     runtime: docker
     plan: free
+    dockerContext: backend
     healthCheckPath: /health
     envVars:
       - key: SECRET_KEY
