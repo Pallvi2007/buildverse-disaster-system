@@ -1,7 +1,30 @@
-fastapi==0.110.0
-uvicorn==0.28.0
-pydantic==2.6.4
-requests==2.31.0
-python-dotenv==1.0.1
-langgraph==0.0.26
-langgraph-checkpoint-sqlite==0.0.1
+# =====================================================================
+# BuildVerse Disaster Management Engine - Core Production Dependencies
+# File: backend/requirements.txt
+# =====================================================================
+
+# --- CORE WEB APPLICATION FRAMEWORK ---
+fastapi>=0.110.0,<0.112.0
+uvicorn[standard]>=0.28.0,<0.30.0
+
+# --- DATA VALIDATION & CONFIGURATION ENGINES ---
+pydantic>=2.6.4,<2.8.0
+pydantic-settings>=2.2.1,<2.4.0
+
+# --- ASYNCHRONOUS GRAPH ORCHESTRATION PLATFORM ---
+# LangGraph state machine handles agentic conditional tracking pipelines natively
+langgraph>=0.0.26,<0.2.0
+
+# --- NETWORKING CLIENT INTEGRATIONS ---
+# httpx replaces 'requests' to provide thread-safe async calls to OpenWeatherMap/USGS APIs
+httpx>=0.27.0,<0.28.0
+requests>=2.31.0,<2.33.0
+
+# --- SECURITY, CRYPTOGRAPHY & ACCOUNT ACCESS ---
+# Used for parsing claims, decoding JWT bearer strings, and hashing authorization routes
+python-jose[cryptography]>=3.3.0,<4.0.0
+
+# --- OBSERVABILITY, TELEMETRY & SYSTEM MONITORING ---
+# Handles async console color formatting, JSON serialization streams, and thread locks
+loguru>=0.7.2,<0.8.0
+python-dotenv>=1.0.1,<1.1.0
