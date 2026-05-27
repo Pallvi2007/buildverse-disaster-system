@@ -3,7 +3,7 @@ services:
   - type: web
     name: buildverse-backend
     env: docker
-    plan: free
+    plan: starter        # ← changed from "free" (free web services no longer exist)
     healthCheckPath: /health
     envVars:
       - key: SECRET_KEY
@@ -18,18 +18,7 @@ services:
   - type: web
     name: buildverse-frontend
     runtime: static
-    plan: free
+    plan: free           # ← fine, static sites still have a free tier
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://buildverse-backend.onrender.com
-      - key: VITE_API_SECRET
-        sync: false
-
-# 3. Persistent Managed PostgreSQL Instance
-databases:
-  - name: buildverse-db
-    plan: free
-    databaseName: buildverse
-    user: buildverse_user
+    ...
