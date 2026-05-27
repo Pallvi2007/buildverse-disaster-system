@@ -2,19 +2,17 @@ services:
   # 1. Backend Service (FastAPI + LangGraph Container running SQLite)
   - type: web
     name: buildverse-backend
-    env: docker
+    runtime: docker
     plan: free
     healthCheckPath: /health
     envVars:
       - key: SECRET_KEY
         generateValue: true
-    autoDeploy: true
 
   # 2. Frontend Service (React + Vite Static Site)
   - type: web
     name: buildverse-frontend
     runtime: static
-    plan: free
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
     envVars:
