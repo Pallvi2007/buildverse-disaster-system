@@ -1,97 +1,182 @@
 import React, { useState } from 'react';
+import { 
+  ShieldAlert, 
+  MapPin, 
+  Radio, 
+  Activity, 
+  CheckCircle2, 
+  AlertTriangle,
+  LockOpen
+} from 'lucide-react';
 
+// =====================================================================
+// INTERFACE TYPING CONTRACTS
+// =====================================================================
 interface ControlPanelProps {
-  onTrigger: (location: string) => void;
+  /** Dispatches primary location ingestion workflows to the FastAPI orchestration gateway */
+  onTrigger: (location: string) => Promise<void> | void;
+  /** Dispatches authorization triggers to release the LangGraph Human-In-The-Loop hold gate */
+  onApproveMitigation: () => Promise<void> | void;
+  /** Master tracking state indicating network communication tasks are active */
   isLoading: boolean;
+  /** Current state placement of the backend graph engine */
+  engineStatus?: 'IDLE' | 'ACTIVE' | 'AWAITING_APPROVAL' | 'CRITICAL';
 }
 
-const ControlPanel: React.FC<ControlPanelProps> = ({ onTrigger, isLoading }) => {
+// =====================================================================
+// COMPONENT IMPLEMENTATION
+// =====================================================================
+export const ControlPanel: React.FC<ControlPanelProps> = ({ 
+  onTrigger, 
+  onApproveMitigation,
+  isLoading, 
+  engineStatus = 'IDLE' 
+}) => {
   const [location, setLocation] = useState<string>('');
-
-  // Advanced feature: Direct telemetry presets for swift engine evaluation testing
-  const presets = ['New Delhi', 'Mumbai', 'London', 'Tokyo'];
+  
+  // Tactical coordinate targets mapped directly to our USGS backend matrix presets
+  const presets = ['Mumbai', 'Tokyo', 'San Francisco', 'New Delhi'];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (location.trim()) {
-      onTrigger(location.trim());
+    if (!location.trim() || isLoading || engineStatus === 'AWAITING_APPROVAL') return;
+    onTrigger(location.trim());
+  };
+
+  const handlePresetSelect = (selectedCity: string) => {
+    if (isLoading || engineStatus === 'AWAITING_APPROVAL') return;
+    setLocation(selectedCity);
+    onTrigger(selectedCity);
+  };
+
+  // Dynamic style compiler mapping backend engines states to appropriate visual cues
+  const getStatusBadgeStyles = () => {
+    switch (engineStatus) {
+      case 'ACTIVE':
+        return 'bg-blue-950 text-blue-400 border-blue-800/60';
+      case 'AWAITING_APPROVAL':
+        return 'bg-amber-950/80 text-amber-400 border-amber-800/60 animate-pulse';
+      case 'CRITICAL':
+        return 'bg-red-950 text-red-400 border-red-900/60';
+      default:
+        return 'bg-slate-800 text-slate-400 border-slate-700';
     }
   };
 
-  const handlePresetClick = (city: string) => {
-    if (isLoading) return;
-    setLocation(city);
-    onTrigger(city);
-  };
-
   return (
-    <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl shadow-black/40 hover:border-white/15 transition-all duration-300">
-      <h3 className="text-sm font-mono uppercase tracking-wider text-slate-400 mb-4 font-bold border-b border-white/5 pb-2 flex justify-between items-center">
-        <span>Command Deck Input</span>
-        <span className="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-1.5 py-0.5 rounded font-normal">
-          CONSOLED
-        </span>
-      </h3>
+    <div className="bg-slate-900 border border-slate-800 rounded-xl shadow-2xl overflow-hidden font-sans transition-all duration-300 hover:border-slate-750">
       
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <label className="block text-xs font-mono text-slate-400 uppercase mb-1.5 font-semibold">
-            Geographic Incident Target
-          </label>
-          <input
-            type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            disabled={isLoading}
-            placeholder="e.g., Mumbai, New Delhi, London"
-            className="w-full bg-slate-950/60 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-left font-sans"
-          />
+      {/* 1. TACTICAL HEADER MATRIX */}
+      <div className="bg-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+        <div className="flex items-center gap-2.5">
+          <ShieldAlert className={`w-5 h-5 ${engineStatus === 'CRITICAL' ? 'text-red-500 animate-bounce' : 'text-blue-500'}`} />
+          <h2 className="text-xs font-bold text-slate-200 tracking-widest uppercase">
+            Emergency Response Command
+          </h2>
         </div>
+        
+        <div className={`flex items-center gap-1.5 text-[10px] font-mono font-bold px-2.5 py-1 rounded border shadow-inner ${getStatusBadgeStyles()}`}>
+          <span className={`w-1.5 h-1.5 rounded-full ${
+            engineStatus === 'ACTIVE' ? 'bg-blue-400 animate-ping' : 
+            engineStatus === 'AWAITING_APPROVAL' ? 'bg-amber-500' : 
+            engineStatus === 'CRITICAL' ? 'bg-red-500 animate-pulse' : 'bg-slate-500'
+          }`} />
+          {engineStatus.replace('_', ' ')}
+        </div>
+      </div>
 
-        {/* Dynamic Telemetry Quick-Select Presets */}
-        <div className="space-y-1.5">
-          <span className="block text-[10px] font-mono text-slate-500 uppercase font-semibold">
-            Target Presets Matrix
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {presets.map((city) => (
-              <button
-                key={city}
-                type="button"
-                disabled={isLoading}
-                onClick={() => handlePresetClick(city)}
-                className={`text-xs font-mono px-2.5 py-1.5 rounded-lg border transition-all duration-150 ${
-                  location.toLowerCase() === city.toLowerCase()
-                    ? 'bg-blue-500/20 text-blue-300 border-blue-400/40 shadow-inner'
-                    : 'bg-slate-950/40 text-slate-400 border-white/5 hover:bg-slate-900 hover:text-slate-200 hover:border-white/10'
-                } disabled:opacity-40 disabled:cursor-not-allowed`}
-              >
-                {city.replace(' ', '_').toUpperCase()}
-              </button>
-            ))}
+      {/* 2. COMMAND INTERFACE FORM */}
+      <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        
+        {/* Target Geographic Location Entry */}
+        <div>
+          <label className="block text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-2">
+            Target Geographic Coordinate
+          </label>
+          <div className="relative">
+            <MapPin className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-500 transition-colors" />
+            <input
+              className="w-full bg-slate-950 border border-slate-800 text-slate-100 pl-11 pr-4 py-3 rounded-lg text-sm focus:ring-2 focus:ring-blue-900/50 focus:border-blue-600 outline-none transition-all placeholder:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              placeholder="Input target city or sector..."
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              disabled={isLoading || engineStatus === 'AWAITING_APPROVAL'}
+            />
           </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={isLoading || !location.trim()}
-          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98] text-white font-medium py-3 px-4 rounded-xl shadow-lg shadow-blue-900/30 text-sm transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 font-mono tracking-wide"
-        >
-          {isLoading ? (
-            <>
-              <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-              EXECUTING_PIPELINE...
-            </>
-          ) : (
-            'INITIALIZE_ORCHESTRATION'
+        {/* Pre-Defined Tactical Preset Sectors */}
+        <div>
+          <label className="block text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-2">
+            Pre-Defined Sectors
+          </label>
+          <div className="grid grid-cols-2 gap-2.5">
+            {presets.map((city) => {
+              const isSelected = location === city;
+              return (
+                <button
+                  key={city}
+                  type="button"
+                  disabled={isLoading || engineStatus === 'AWAITING_APPROVAL'}
+                  onClick={() => handlePresetSelect(city)}
+                  className={`flex items-center gap-2 px-3.5 py-2.5 border rounded-lg text-[11px] font-semibold tracking-wide transition-all duration-200 active:scale-98 disabled:opacity-40 disabled:hover:bg-slate-800 disabled:cursor-not-allowed ${
+                    isSelected 
+                      ? 'bg-blue-950 border-blue-600 text-blue-300 shadow-md' 
+                      : 'bg-slate-800/60 hover:bg-slate-800 border-slate-800 text-slate-300 hover:text-white'
+                  }`}
+                >
+                  <Radio className={`w-3.5 h-3.5 ${isSelected ? 'text-blue-400 animate-pulse' : 'text-slate-500'}`} />
+                  {city.toUpperCase()}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 3. CONTEXTUAL ACTION CONTROLS TRIGGER */}
+        <div className="pt-2 border-t border-slate-800/60 space-y-3">
+          
+          {/* CRITICAL GOVERNANCE HOLD: INTERRUPT BEFORE STEP VIEW */}
+          {engineStatus === 'AWAITING_APPROVAL' && (
+            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 space-y-3 animate-fade-in">
+              <div className="flex gap-2.5">
+                <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wide">
+                    Human-In-The-Loop Hold Active
+                  </h3>
+                  <p className="text-[11px] text-slate-400 leading-relaxed mt-1">
+                    Telemetry analysis complete. The core engine is safely holding state inside the checkpoint ledger. Verify values below before clearance execution.
+                  </p>
+                </div>
+              </div>
+              
+              <button
+                type="button"
+                disabled={isLoading}
+                onClick={onApproveMitigation}
+                className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 text-white text-xs font-bold py-3 px-4 rounded-lg tracking-wider uppercase flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-950/20 active:scale-98"
+              >
+                {isLoading ? <Activity className="animate-spin w-4 h-4" /> : <LockOpen className="w-4 h-4" />}
+                {isLoading ? 'AUTHORIZING DEPLOYMENT...' : 'AUTHORIZE SYSTEM DEPLOYMENT'}
+              </button>
+            </div>
           )}
-        </button>
+
+          {/* STANDARD RUNTIME BUTTON */}
+          {engineStatus !== 'AWAITING_APPROVAL' && (
+            <button
+              type="submit"
+              disabled={isLoading || !location.trim()}
+              className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md shadow-blue-950/10 active:scale-98"
+            >
+              {isLoading ? <Activity className="animate-spin w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
+              {isLoading ? 'ORCHESTRATING WORKFLOW...' : 'EXECUTE RESPONSE PROTOCOL'}
+            </button>
+          )}
+        </div>
+
       </form>
     </div>
   );
 };
-
-export default ControlPanel;

@@ -2,13 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono&display=swap');
+/* * DESIGN SYSTEM V2.0 
+ * Standardized font stack for operational dashboards
+ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-body {
-  @apply bg-[#050505] text-slate-300;
+@layer base {
+  body {
+    @apply bg-[#050505] text-slate-300 antialiased font-sans selection:bg-blue-600/30;
+  }
+
+  /* Force consistent scrollbar behavior across all browsers */
+  :root {
+    scrollbar-color: #1e293b #000;
+  }
 }
 
-/* Custom scrollbar for professional look */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #000; }
-::-webkit-scrollbar-thumb { background: #333; }
+@layer utilities {
+  /* High-Fidelity Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #020617; /* slate-950 */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #334155; /* slate-700 */
+    border-radius: 4px;
+    transition: background 0.3s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #475569; /* slate-600 */
+  }
+
+  /* Monospaced data protection for telemetry feeds */
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Base animation framework */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

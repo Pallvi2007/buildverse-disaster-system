@@ -1,11 +1,6 @@
 # """
 # BuildVerse Disaster Management Engine - Central Configuration Architecture
 # File: backend/app/config.py
-
-# This module establishes the single source of truth for application settings. 
-# Using Pydantic Settings, it securely handles environment variable parsing, 
-# runs strict type casting validations at engine startup, manages system security 
-# credentials, and isolates staging/production runtime modes.
 # """
 
 from typing import List, Dict, Any, Final, Optional
@@ -30,8 +25,13 @@ class Settings(BaseSettings):
         description="The operational state of the runner instance (e.g., development, production)."
     )
 
+    # --- DATABASE CONFIGURATION VECTOR ---
+    DATABASE_URL: str = Field(
+        default="sqlite:///./disaster_system.db",
+        description="The primary target storage connection URL. Falls back to local SQLite if unset."
+    )
+
     # --- CRYPTOGRAPHIC & SECURITY CONTROLS ---
-    # SecretStr explicitly shields credentials from leaking into stringified dictionary print statements or logs
     SECRET_KEY: SecretStr = Field(
         ...,
         description="The cryptographic anchor string utilized for signing and verifying OAuth2/JWT session identifiers."
@@ -63,6 +63,18 @@ class Settings(BaseSettings):
     # =====================================================================
     # PYDANTIC VALIDATION & SANITIZATION GATEWAYS
     # =====================================================================
+    @field_validator("DATABASE_URL")
+    @classmethod
+    def patch_postgres_driver_string(cls, val: str) -> str:
+        """
+        Catches Render's legacy postgres:// connection schema strings and 
+        upgrades them automatically to match SQLAlchemy 1.4+ requirements.
+        """
+        if val.startswith("postgres://"):
+            logger.info("[CONFIG] Patching legacy Render 'postgres://' connection driver to 'postgresql://'.")
+            return val.replace("postgres://", "postgresql://", 1)
+        return val
+
     @field_validator("LOG_LEVEL")
     @classmethod
     def validate_log_level(cls, val: str) -> str:
@@ -96,7 +108,6 @@ class Settings(BaseSettings):
     # =====================================================================
     # ENGINE RUNTIME MAPPING SPECIFICATIONS
     # =====================================================================
-    # Pydantic Settings Config replaces the old inner 'Class Config' layout with a cleaner model dictionary structure
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -105,5 +116,5 @@ class Settings(BaseSettings):
     )
 
 
-# =====================================================================
-#
+# Instantiate settings instance immediately for application-wide imports
+settings = Settings()

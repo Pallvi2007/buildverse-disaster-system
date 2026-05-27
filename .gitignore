@@ -1,5 +1,27 @@
-venv/
+# --- Dependencies & Build Artifacts ---
 node_modules/
-.env
-*.db
 dist/
+build/
+.venv/
+venv/
+env/
+.env
+
+# --- Python & FastAPI Internals ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.db
+*.sqlite
+checkpoints.sqlite
+logs/
+
+# --- IDE & OS Metadata ---
+.DS_Store
+.vscode/
+.idea/
+*.log
+
+# --- BuildVerse Engine Data/Temp ---
+state_store/
+temp_metrics/
