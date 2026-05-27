@@ -19,9 +19,8 @@ services:
     name: buildverse-frontend
     runtime: static
     plan: free
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
     envVars:
       - key: VITE_API_URL
         value: https://buildverse-backend.onrender.com
