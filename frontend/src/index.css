@@ -1,23 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* * DESIGN SYSTEM V2.0 
- * Standardized font stack for operational dashboards
- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
+/* 3. BASE HTML/BODY STYLES */
 @layer base {
-  body {
-    @apply bg-[#050505] text-slate-300 antialiased font-sans selection:bg-blue-600/30;
+  :root {
+    /* Force consistent scrollbar behavior across all browsers */
+    scrollbar-color: #1e293b #020617; 
   }
 
-  /* Force consistent scrollbar behavior across all browsers */
-  :root {
-    scrollbar-color: #1e293b #000;
+  body {
+    /* Merged your dark themes into one cohesive slate background */
+    @apply bg-[#020617] text-slate-300 antialiased font-sans selection:bg-blue-600/30;
   }
 }
 
+/* 4. CUSTOM COMPONENTS */
+@layer components {
+  .glass-panel {
+    @apply bg-[#0f172a]/50 backdrop-blur-xl border border-[rgba(255,255,255,0.08)] rounded-2xl;
+  }
+}
+
+/* 5. CUSTOM UTILITIES */
 @layer utilities {
   /* High-Fidelity Custom Scrollbar */
   ::-webkit-scrollbar {
@@ -45,7 +52,7 @@
   }
 }
 
-/* Base animation framework */
+/* 6. CUSTOM ANIMATIONS */
 @keyframes pulse-subtle {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }

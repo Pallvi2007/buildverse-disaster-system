@@ -2,114 +2,74 @@ import React from 'react';
 import { Cpu, Radio, Shield, Loader2, Database } from 'lucide-react';
 import { PipelineState } from '../App';
 
-// =====================================================================
-// TYPING CONTRACT DEFINITIONS
-// =====================================================================
 interface PhaseBControlProps {
-  /** Core state ledger object synced directly from the LangGraph processing framework */
   state: PipelineState | null;
-  /** Global execution tracking flag indicating active asynchronous server requests */
   isLoading: boolean;
 }
 
-// =====================================================================
-// PRODUCTION HARDENED TELEMETRY MONITOR COMPONENT
-// =====================================================================
-export const PhaseBControl: React.FC<PhaseBControlProps> = ({ 
-  state, 
-  isLoading 
-}) => {
+export const PhaseBControl: React.FC<PhaseBControlProps> = ({ state, isLoading }) => {
   
-  // --- 1. UNINITIALIZED / IDLE RUNTIME FALLBACK VIEW ---
   if (!state) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 text-slate-300 font-sans shadow-lg transition-all">
-        <div className="flex items-center gap-2.5 border-b border-slate-800/80 pb-3">
-          <Cpu className="text-indigo-500 w-4 h-4" />
-          <h3 className="text-xs font-bold text-slate-200 tracking-wider uppercase">
-            System Core Telemetry
-          </h3>
+      <div className="bg-bg-surface/50 backdrop-blur-xl border border-border-dim rounded-2xl p-6 text-slate-400 shadow-card">
+        <div className="flex items-center gap-3 border-b border-border-dim pb-4 mb-4">
+          <Cpu className="text-accent-blue w-4 h-4" />
+          <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase">System Core Telemetry</h3>
         </div>
-        
-        <div className="mt-4 flex flex-col items-center justify-center py-4 text-center">
-          <Database className="w-5 h-5 text-slate-700 animate-pulse mb-2" />
-          <p className="text-[11px] font-mono text-slate-500">
-            Awaiting execution dispatch parameters...
-          </p>
+        <div className="flex flex-col items-center justify-center py-6 text-center">
+          <Database className="w-6 h-6 text-slate-700 mb-3" />
+          <p className="text-[10px] font-mono uppercase tracking-widest">Awaiting uplink parameters...</p>
         </div>
       </div>
     );
   }
 
-  // --- 2. EVALUATE RUNTIME PROGRESSION STEPS ---
   const hasPrediction = !!state.disaster_prediction;
   const hasActionPlan = !!state.action_plan;
 
-  // Calculate granular progress tracking indicators based on available graph data
   const getWorkflowMetrics = () => {
-    if (isLoading) {
-      return { label: "Ingesting Data & Resolving Matrix", progressClass: "w-1/3 bg-blue-500" };
-    }
-    if (hasActionPlan) {
-      return { label: "Pipeline Evaluation Finalized", progressClass: "w-full bg-emerald-500" };
-    }
-    if (hasPrediction) {
-      return { label: "Hazards Calculated // Awaiting Governance Clearance", progressClass: "w-2/3 bg-amber-500" };
-    }
-    return { label: "Initializing State Subsystem", progressClass: "w-12 bg-indigo-500 animate-pulse" };
+    if (isLoading) return { label: "Ingesting Data", color: "bg-accent-blue", width: "w-1/3" };
+    if (hasActionPlan) return { label: "Pipeline Finalized", color: "bg-emerald-500", width: "w-full" };
+    if (hasPrediction) return { label: "Governance Pending", color: "bg-amber-500", width: "w-2/3" };
+    return { label: "Initializing", color: "bg-accent-blue", width: "w-12" };
   };
 
-  const currentWorkflow = getWorkflowMetrics();
+  const metrics = getWorkflowMetrics();
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 text-slate-300 font-sans shadow-xl relative overflow-hidden transition-all duration-300 hover:border-slate-750">
+    <div className="bg-bg-surface/50 backdrop-blur-xl border border-border-dim rounded-2xl p-6 shadow-card transition-all duration-300">
       
-      {/* Decorative top illumination accent */}
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
-
-      {/* Module Operational Header */}
-      <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-        <div className="flex items-center gap-2.5">
-          <Cpu className="text-indigo-400 w-4 h-4 animate-pulse" />
-          <h3 className="text-xs font-bold text-slate-200 tracking-wider uppercase">
-            System Core Telemetry
-          </h3>
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-border-dim pb-4 mb-6">
+        <div className="flex items-center gap-3">
+          <Cpu className="text-accent-blue w-4 h-4 animate-pulse" />
+          <h3 className="text-[10px] font-bold text-slate-200 tracking-[0.2em] uppercase">System Core Telemetry</h3>
         </div>
-        
-        <div className="flex items-center gap-1 bg-slate-950 px-2 py-0.5 rounded border border-slate-800/60 font-mono text-[9px] text-slate-500">
-          <Radio className={`w-2.5 h-2.5 ${isLoading ? 'text-blue-400 animate-spin' : 'text-indigo-500'}`} />
-          <span>STREAM_PHASE_B</span>
+        <div className="flex items-center gap-2 bg-bg-base px-3 py-1 rounded-lg border border-border-dim font-mono text-[9px] text-slate-400">
+          <Radio className={`w-3 h-3 ${isLoading ? 'text-accent-blue animate-spin' : 'text-slate-500'}`} />
+          <span>PHASE_B_LINK</span>
         </div>
       </div>
 
-      {/* Operational Variable Log Deck */}
-      <div className="mt-4 space-y-3 font-mono text-[11px]">
-        
-        {/* Geographic Coordinate Vector */}
-        <div className="flex justify-between items-center bg-slate-950/40 border border-slate-850 rounded-lg p-2.5">
-          <span className="text-slate-500 text-[10px] uppercase tracking-wide">Target Vector:</span>
-          <span className="text-slate-200 font-bold tracking-wide">{state.location}</span>
+      {/* Metrics Grid */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center bg-bg-base/50 border border-border-dim rounded-xl p-3">
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Vector</span>
+          <span className="font-mono text-[11px] text-white font-bold">{state.location.toUpperCase()}</span>
         </div>
 
-        {/* Dynamic State Machine Tracker */}
-        <div className="flex justify-between items-center bg-slate-950/40 border border-slate-850 rounded-lg p-2.5">
-          <span className="text-slate-500 text-[10px] uppercase tracking-wide">Status Index:</span>
-          <span className={`font-bold flex items-center gap-1.5 ${
-            isLoading ? 'text-blue-400' : hasActionPlan ? 'text-emerald-400' : 'text-amber-400'
-          }`}>
-            {isLoading && <Loader2 className="w-3 h-3 animate-spin" />}
-            {!isLoading && <Shield className="w-3 h-3" />}
-            {currentWorkflow.label}
+        <div className="flex justify-between items-center bg-bg-base/50 border border-border-dim rounded-xl p-3">
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</span>
+          <span className="flex items-center gap-2 font-mono text-[11px] text-slate-200">
+            {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Shield className="w-3 h-3" />}
+            {metrics.label}
           </span>
         </div>
 
-        {/* Strategic Data Progress Gauge Bar */}
-        <div className="space-y-1.5 pt-1">
-          <div className="h-1.5 w-full bg-slate-950 border border-slate-850 rounded-full overflow-hidden p-[1px]">
-            <div className={`h-full rounded-full transition-all duration-500 ease-out ${currentWorkflow.progressClass}`} />
-          </div>
+        {/* Progress Gauge */}
+        <div className="h-1.5 w-full bg-bg-base border border-border-dim rounded-full overflow-hidden">
+          <div className={`h-full ${metrics.color} transition-all duration-500 ease-out ${metrics.width}`} />
         </div>
-
       </div>
     </div>
   );

@@ -8,22 +8,30 @@ export default {
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       colors: {
-        // Deep obsidian background for terminal-feel
-        'engine-bg': '#050505', 
-        'engine-surface': '#0f172a',
-        // Tactical accent system
-        'accent': '#3b82f6', // blue-500
-        'danger': '#ef4444',
-        'success': '#10b981',
+        // High-end dark theme palette
+        'bg-base': '#020617', // Slate 950
+        'bg-surface': '#0f172a', // Slate 900
+        'border-dim': 'rgba(255, 255, 255, 0.08)',
+        'accent-blue': {
+          DEFAULT: '#3b82f6',
+          glow: 'rgba(59, 130, 246, 0.2)',
+        },
+      },
+      boxShadow: {
+        'glow-blue': '0 0 20px -5px rgba(59, 130, 246, 0.3)',
+        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3)',
+      },
+      backdropBlur: {
+        'xs': '2px',
       },
       animation: {
-        'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'scan': 'scan 3s linear infinite',
+        'slow-spin': 'spin 8s linear infinite',
+        'fade-in': 'fadeIn 0.5s ease-in-out',
       },
       keyframes: {
-        scan: {
-          '0%': { transform: 'translateY(-100%)' },
-          '100%': { transform: 'translateY(100%)' },
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
     },
